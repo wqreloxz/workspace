@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apex Workspace</title>
+  <!-- Подключаем чистый шрифт Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* --- ПЕРЕМЕННЫЕ (ТЕМЫ) --- */
+    :root {
+      /* Dark Theme (по умолчанию) */
+      --bg-primary: #000000; /* Глубокий черный фон */
+      --bg-secondary: #0a0a0a; /* Чуть светлее для шапки */
+      --bg-card: #111111; /* Фон карточек */
+      --bg-input: #191919; /* Фон полей ввода */
+      --text-main: #ffffff; /* Белый текст */
+      --text-muted: #888888; /* Серый текст */
+      --border-color: #222222; /* Очень тонкие границы */
+      --accent: #ffffff; /* Акцент — белый */
+      --accent-hover: #e0e0e0;
+      --accent-light: rgba(255, 255, 255, 0.1);
+      --success: #22c55e;
+      --danger: #ef4444;
+      
+      /* Стили финансовой карты (Dark) */
+      --card-bg: #111111;
+      --card-text: #ffffff;
+      --card-border: #333333;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+    }
+
+    [data-theme="light"] {
+      /* Light Theme */
+      --bg-primary: #f5f5f5;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --bg-input: #f0f0f0;
+      --text-main: #000000;
+      --text-muted: #666666;
+      --border-color: #e0e0e0;
+      --accent: #000000;
+      --accent-hover: #333333;
+      --accent-light: rgba(0, 0, 0, 0.05);
+      
+      /* Стили финансовой карты (Light) */
+      --card-bg: #000000;
+      --card-text: #ffffff;
+      --card-border: #000000;
+    }
+
+    /* ---ОБЩИЕ СТИЛИ --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---ШАПКА И НАВИГАЦИЯ --- */
+    header {
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.04em; /* Плотный шрифт */
+    }
+
+    .btn-theme {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-theme:hover {
+      border-color: var(--text-muted);
+    }
+
+    nav {
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      padding: 6px;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px 18px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-main);
+    }
+
+    .nav-btn.active {
+      color: var(--text-main);
+      background-color: var(--accent-light);
+      font-weight: 600;
+    }
+
+    /* ---КОНТЕЙНЕР --- */
+    main {
+      flex: 1;
+      max-width: 800px; /* Уменьшили ширину для минимализма */
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* ---ТИПОГРАФИКА И ЭЛЕМЕНТЫ UI --- */
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      letter-spacing: -0.03em;
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    /* Исправление выезда кнопок: Flex-контейнер для форм */
+    .form-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap; /* Позволяет элементам переноситься на мобильных */
+      width: 100%;
+    }
+
+    input, select, textarea {
+      flex: 1; /* Элементы растягиваются */
+      min-width: 150px; /* Минимальная ширина, чтобы не схлопывались */
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--text-muted);
+    }
+
+    .btn {
+      background-color: var(--accent);
+      color: var(--bg-primary); /* Текст кнопки цвета фона */
+      border: none;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      white-space: nowrap; /* Кнопка не переносится */
+    }
+
+    .btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-danger-sm {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--border-color);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .btn-danger-sm:hover {
+      background-color: var(--danger);
+      color: #fff;
+      border-color: var(--danger);
+    }
+
+    /* --- PAGE: FINANCE (ЧЕРНАЯ КАРТОЧКА) --- */
+    .fin-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      color: var(--card-text);
+      margin-bottom: 32px;
+      /* Добавим легкое свечение в темной теме */
+      box-shadow: [data-theme="dark"] 0 0 15px rgba(255,255,255,0.03);
+    }
+
+    .fin-card-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .fin-card-balance {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      margin-bottom: 30px;
+    }
+
+    .fin-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+
+    .fin-card-app-name {
+      font-weight: 700;
+    }
+
+    /* История транзакций */
+    .transaction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px; /* Тонкие линии между */
+      background-color: var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .transaction-item {
+      background-color: var(--bg-card);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .transaction-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 2px;
+    }
+
+    .transaction-category {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .transaction-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .transaction-amount {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .transaction-amount.income { color: var(--success); }
+    /* Expense просто белый/черный текста */
+
+    /* --- PAGE: TASKS & PROGRESS --- */
+    .progress-box {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .progress-bar-bg {
+      flex: 1;
+      background-color: var(--bg-input);
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      background-color: var(--accent);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      width: 40px;
+      text-align: right;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .task-item {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .task-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .task-checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--accent);
+    }
+
+    .task-text {
+      font-size: 0.95rem;
+    }
+
+    .task-item.completed .task-text {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    /* --- PAGE: NOTES (NOTION STYLE) --- */
+    .notes-layout {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .notes-layout { grid-template-columns: 1fr; }
+    }
+
+    .notes-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .note-nav-item {
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .note-nav-item:hover {
+      background-color: var(--bg-input);
+      color: var(--text-main);
+    }
+
+    .note-nav-item.active {
+      background-color: var(--accent-light);
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .note-editor {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .note-editor-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      padding: 0;
+      letter-spacing: -0.03em;
+    }
+
+    .note-editor-body {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      resize: none;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      padding: 0;
+      min-height: 300px;
+    }
+
+    /* Заглушки */
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      background-color: var(--bg-card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">Apex Workspace</div>
+    <button class="btn-theme" id="theme-toggle">Светлая тема</button>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" onclick="switchPage('finance')">Финансы</button>
+    <button class="nav-btn" onclick="switchPage('tasks')">Задачи</button>
+    <button class="nav-btn" onclick="switchPage('notes')">Заметки</button>
+  </nav>
+
+  <main>
+    <!-- PAGE 1: FINANCE -->
+    <section id="page-finance" class="page active">
+      <!-- Минималистичная ЧЕРНАЯ КАРТОЧКА -->
+      <div class="fin-card">
+        <div class="fin-card-label">Баланс счет</div>
+        <div class="fin-card-balance" id="card-balance">0.00 BYN</div>
+        <div class="fin-card-footer">
+          <div class="fin-card-app-name">Apex Workspace</div>
+          <div>PRIMARY</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <!-- Исправленная форма: form-row -->
+        <div class="form-row">
+          <input type="text" id="fin-title" placeholder="Название (Продукты)">
+          <input type="number" id="fin-amount" placeholder="Сумма" step="0.01">
+          <select id="fin-type" style="min-width: 100px; flex: 0;">
+            <option value="expense">Расход</option>
+            <option value="income">Доход</option>
+          </select>
+          <button class="btn" onclick="addTransaction()">Добавить</button>
+        </div>
+      </div>
+
+      <div class="section-title">История</div>
+      <div class="transaction-list" id="transaction-list">
+        <!-- Сюда добавляются транзакции -->
+      </div>
+    </section>
+
+    <!-- PAGE 2: TASKS -->
+    <section id="page-tasks" class="page">
+      <div class="progress-box">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-text" id="progress-percent">0%</div>
+      </div>
+
+      <div class="card">
+        <div class="form-row">
+          <input type="text" id="task-title" placeholder="Новая задача...">
+          <button class="btn" onclick="addTask()">Добавить</button>
+        </div>
+      </div>
+
+      <div class="task-list" id="task-list">
+        <!-- Сюда добавляются задачи -->
+      </div>
+    </section>
+
+    <!-- PAGE 3: NOTES -->
+    <section id="page-notes" class="page">
+      <div style="margin-bottom: 20px; text-align: right;">
+        <button class="btn" onclick="createNote()">+ Новая заметка</button>
+      </div>
+
+      <div class="notes-layout">
+        <div class="notes-sidebar" id="notes-sidebar">
+          <!-- Список заметок -->
+        </div>
+        <div class="note-editor">
+          <input type="text" id="note-editor-title" class="note-editor-title" placeholder="Заголовок..." oninput="updateCurrentNote()">
+          <textarea id="note-editor-body" class="note-editor-body" placeholder="Начните писать..." oninput="updateCurrentNote()"></textarea>
+          <div style="text-align: right; margin-top: 10px;">
+            <button class="btn-danger-sm" onclick="deleteCurrentNote()">Удалить</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // --- УПРАВЛЕНИЕ СОСТОЯНИЕМ (localStorage) ---
+    let state = {
+      theme: localStorage.getItem('apex_theme_v2') || 'dark',
+      currentPage: 'finance',
+      transactions: JSON.parse(localStorage.getItem('apex_transactions_v2')) || [],
+      tasks: JSON.parse(localStorage.getItem('apex_tasks_v2')) || [],
+      notes: JSON.parse(localStorage.getItem('apex_notes_v2')) || [
+        { id: 1, title: 'Добро пожаловать', body: 'Это простой редактор заметок.\n\nДанные сохраняются в вашем браузере.' }
+      ],
+      activeNoteId: null
+    };
+
+    if (state.notes.length > 0) state.activeNoteId = state.notes[0].id;
+
+    // --- ИНИЦИАЛИЗАЦИЯ И ТЕМЫ ---
+    document.addEventListener('DOMContentLoaded', () => {
+      applyTheme(state.theme);
+      renderFinance();
+      renderTasks();
+      renderNotes();
+    });
+
+    const themeBtn = document.getElementById('theme-toggle');
+    themeBtn.addEventListener('click', () => {
+      state.theme = state.theme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('apex_theme_v2', state.theme);
+      applyTheme(state.theme);
+    });
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      themeBtn.textContent = theme === 'dark' ? 'Светлая тема' : 'Темная тема';
+    }
+
+    // --- НАВИГАЦИЯ ---
+    function switchPage(pageId) {
+      state.currentPage = pageId;
+      document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+      document.getElementById(`page-${pageId}`).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // --- ЛОГИКА: ФИНАНСЫ ---
+    function renderFinance() {
+      const listEl = document.getElementById('transaction-list');
+      const balanceEl = document.getElementById('card-balance');
+      listEl.innerHTML = '';
+      let balance = 0;
+
+      if (state.transactions.length === 0) {
+        listEl.innerHTML = '<div class="empty-state">Нет записей</div>';
+      } else {
+        // Сортировка: новые сверху
+        state.transactions.slice().sort((a,b) => b.id - a.id).forEach(t => {
+          const isIncome = t.type === 'income';
+          balance += isIncome ? Number(t.amount) : -Number(t.amount);
+
+          const item = document.createElement('div');
+          item.className = 'transaction-item';
+          item.innerHTML = `
+            <div>
+              <div class="transaction-title">${escapeHtml(t.title)}</div>
+              <div class="transaction-category">${isIncome ? 'Доход' : 'Расход'}</div>
+            </div>
+            <div class="transaction-right">
+              <span class="transaction-amount ${t.type}">${isIncome ? '+' : '-'}${Number(t.amount).toFixed(2)}</span>
+              <button class="btn-danger-sm" onclick="deleteTransaction(${t.id})">✕</button>
+            </div>
+          `;
+          listEl.appendChild(item);
+        });
+      }
+      balanceEl.textContent = `${balance.toFixed(2)} BYN`;
+      localStorage.setItem('apex_transactions_v2', JSON.stringify(state.transactions));
+    }
+
+    function addTransaction() {
+      const titleInput = document.getElementById('fin-title');
+      const amountInput = document.getElementById('fin-amount');
+      const typeSelect = document.getElementById('fin-type');
+
+      if (!titleInput.value.trim() || !amountInput.value || Number(amountInput.value) <= 0) return;
+
+      state.transactions.push({
+        id: Date.now(),
+        title: titleInput.value.trim(),
+        amount: parseFloat(amountInput.value),
+        type: typeSelect.value
+      });
+
+      titleInput.value = ''; amountInput.value = '';
+      renderFinance();
+    }
+
+    function deleteTransaction(id) {
+      state.transactions = state.transactions.filter(t => t.id !== id);
+      renderFinance();
+    }
+
+    // --- ЛОГИКА: ЗАДАЧИ ---
+    function renderTasks() {
+      const listEl = document.getElementById('task-list');
+      listEl.innerHTML = '';
+
+      const total = state.tasks.length;
+      const completed = state.tasks.filter(t => t.completed).length;
+      const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+      document.getElementById('progress-percent').textContent = `${percent}%`;
+      document.getElementById('progress-fill').style.width = `${percent}%`;
+
+      if (total === 0) {
+        listEl.innerHTML = '<div class="empty-state">Все задачи выполнены</div>';
+      } else {
+        state.tasks.forEach(t => {
+          const item = document.createElement('div');
+          item.className = `task-item ${t.completed ? 'completed' : ''}`;
+          item.innerHTML = `
+            <div class="task-left">
+              <input type="checkbox" class="task-checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTask(${t.id})">
+              <span class="task-text">${escapeHtml(t.title)}</span>
+            </div>
+            <button class="btn-danger-sm" onclick="deleteTask(${t.id})">✕</button>
+          `;
+          listEl.appendChild(item);
+        });
+      }
+      localStorage.setItem('apex_tasks_v2', JSON.stringify(state.tasks));
+    }
+
+    function addTask() {
+      const input = document.getElementById('task-title');
+      if (!input.value.trim()) return;
+      state.tasks.push({ id: Date.now(), title: input.value.trim(), completed: false });
+      input.value = '';
+      renderTasks();
+    }
+
+    function toggleTask(id) {
+      const task = state.tasks.find(t => t.id === id);
+      if (task) { task.completed = !task.completed; renderTasks(); }
+    }
+
+    function deleteTask(id) {
+      state.tasks = state.tasks.filter(t => t.id !== id);
+      renderTasks();
+    }
+
+    // --- ЛОГИКА: ЗАМЕТКИ ---
+    function renderNotes() {
+      const sidebarEl = document.getElementById('notes-sidebar');
+      const titleInput = document.getElementById('note-editor-title');
+      const bodyInput = document.getElementById('note-editor-body');
+      sidebarEl.innerHTML = '';
+
+      if (state.notes.length === 0) {
+        titleInput.value = ''; bodyInput.value = '';
+        state.activeNoteId = null;
+        sidebarEl.innerHTML = '<div class="empty-state">Нет заметок</div>';
+        return;
+      }
+
+      state.notes.forEach(n => {
+        const item = document.createElement('div');
+        item.className = `note-nav-item ${n.id === state.activeNoteId ? 'active' : ''}`;
+        item.textContent = n.title.trim() || 'Без названия';
+        item.onclick = () => selectNote(n.id);
+        sidebarEl.appendChild(item);
+      });
+
+      const activeNote = state.notes.find(n => n.id === state.activeNoteId);
+      if (activeNote) {
+        titleInput.value = activeNote.title;
+        bodyInput.value = activeNote.body;
+      }
+      localStorage.setItem('apex_notes_v2', JSON.stringify(state.notes));
+    }
+
+    function createNote() {
+      const newNote = { id: Date.now(), title: 'Новая заметка', body: '' };
+      state.notes.unshift(newNote);
+      state.activeNoteId = newNote.id;
+      renderNotes();
+    }
+
+    function selectNote(id) { state.activeNoteId = id; renderNotes(); }
+
+    function updateCurrentNote() {
+      const note = state.notes.find(n => n.id === state.activeNoteId);
+      if (note) {
+        note.title = document.getElementById('note-editor-title').value;
+        note.body = document.getElementById('note-editor-body').value;
+        // Обновляем только название в сайдбаре, не перерисовывая все
+        const activeItem = document.querySelector('.note-nav-item.active');
+        if (activeItem) activeItem.textContent = note.title.trim() || 'Без названия';
+        localStorage.setItem('apex_notes_v2', JSON.stringify(state.notes));
+      }
+    }
+
+    function deleteCurrentNote() {
+      if (!state.activeNoteId) return;
+      state.notes = state.notes.filter(n => n.id !== state.activeNoteId);
+      state.activeNoteId = state.notes.length > 0 ? state.notes[0].id : null;
+      renderNotes();
+    }
+
+    // Вспомогательная функция (защита от XSS)
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+  </script>
+</body>
+</html>
